@@ -8,6 +8,8 @@ local Event = import("Event")
 
 local music = {}
 
+local undock_theme_playing = 0
+
 local getCategoryForSong = function (name)
 	if not name then return "" end
 	local _, _, category = string.find(name, "^music/core/([%l-]+)/")
@@ -64,7 +66,8 @@ local playAmbient = function ()
 	-- however are tiny so use their whole frame
 	local near = Game.player.frameBody
 	if near then
-		if near:isa("Planet") and Game.player.frameRotating then
+		-- if near:isa("Planet") and Game.player.frameRotating then
+		if near:isa("Planet") then
 			category = "near-planet"
 		elseif near:isa("SpaceStation") then
 			category = "near-spacestation"
@@ -103,6 +106,7 @@ end)
 
 -- if a song finishes fall back to ambient music
 Event.Register("onSongFinished", function ()
+    undock_theme_playing = 0
 	playAmbient()
 end)
 
@@ -129,6 +133,7 @@ end)
 -- player undocked
 Event.Register("onShipUndocked", function (ship, station)
 	if not ship:IsPlayer() then return end
+    undock_theme_playing = 1
 	playRandomSongFromCategory("undocked")
 end)
 
@@ -146,6 +151,7 @@ end)
 Event.Register("onFrameChanged", function (body)
 	if not body:isa("Ship") then return end
 	if not body:IsPlayer() then return end
-
+    if undock_theme_playing == 1 then return end
+    
 	playAmbient()
 end)

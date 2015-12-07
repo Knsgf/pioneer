@@ -472,8 +472,8 @@ void SystemView::PutOrbit(const Orbit *orbit, const vector3d &offset, const Colo
 		}
 	}
 
-	static const float startTrailPercent = 0.85;
-	static const float fadedColorParameter = 0.1;
+	static const float startTrailPercent = 0.01;
+	static const float fadedColorParameter = 0.3;
 
 	Uint16 fadingColors = 0;
 	const double tMinust0 = m_time - m_game->GetTime();
