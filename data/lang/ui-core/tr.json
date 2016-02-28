@@ -291,6 +291,10 @@
       "description" : "",
       "message" : "İş"
    },
+   "ENABLE_ANISOTROPIC_FILTERING" : {
+      "description" : "Use Anisotropic Filtering",
+      "message" : "Anisotropic Filtering"
+   },
    "ENABLE_AUTOSAVE" : {
       "description" : "Allow the game to autosave when docking",
       "message" : "Enable Autosave"
@@ -525,7 +529,7 @@
    },
    "LAUNCH_PERMISSION_DENIED_CREW" : {
       "description" : "",
-      "message" : "Denize iniş izni reddedildi: bu gemiyi idare edecek yeterli mürettebata sahip değil."
+      "message" : "Permission to launch denied: not enough crew to handle this ship."
    },
    "LAUNCH_PERMISSION_DENIED_FINED" : {
       "description" : "",
@@ -570,6 +574,10 @@
    "LOBBY" : {
       "description" : "",
       "message" : "Lobi"
+   },
+   "LOCAL_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Yerel kol"
    },
    "LOCATED_N_KM_FROM_THE_CENTRE_OF_NAME" : {
       "description" : "",
@@ -711,6 +719,10 @@
       "description" : "",
       "message" : "Navigasyon:"
    },
+   "NAVIGATOR" : {
+      "description" : "",
+      "message" : "Dümenci"
+   },
    "NEGOTIATE" : {
       "description" : "",
       "message" : "Uzlaş"
@@ -734,6 +746,10 @@
    "NONE_FOR_SALE_IN_THIS_STATION" : {
       "description" : "",
       "message" : "None for sale in this station."
+   },
+   "NORMA_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Norma kolu"
    },
    "NOTES" : {
       "description" : "",
@@ -791,6 +807,10 @@
       "description" : "",
       "message" : "Dairesel yörünge hızı teğet hız için verilmiştir. Gemi {name} eksenine 90° yönünde hareket ediyor olmalıdır.\n\nAlçalma hızı mutlak en az ve yine teğettir. Daha düşük bir hız veya açı {name} yüzeyiyle kesişen bir rotaya neden olacaktır.\n\nKaçış hızı , gemi {name} ile yol üstünde çarpışmadığı sürece, teorik olarak her hangi bir yönde işleyecektir.\n "
    },
+   "OUTER_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Dış kol"
+   },
    "OUTSTANDING_FINES" : {
       "description" : "Unpaid fines for crimes committed",
       "message" : "Outstanding fines"
@@ -803,9 +823,17 @@
       "description" : "",
       "message" : "{amount} ceza öde"
    },
+   "PERSEUS_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Perseus kolu"
+   },
    "PERSONAL_INFORMATION" : {
       "description" : "",
       "message" : "Kişisel Bilgi"
+   },
+   "PILOT" : {
+      "description" : "",
+      "message" : "Pilot"
    },
    "PILOTING" : {
       "description" : "",
@@ -850,6 +878,10 @@
    "PROFESSIONAL" : {
       "description" : "For player reputation",
       "message" : "Profesyonel"
+   },
+   "PUMP_DOWN" : {
+      "description" : "Drain the fuel tank",
+      "message" : "Pump down"
    },
    "QUALIFICATION_SCORES" : {
       "description" : "",
@@ -901,7 +933,7 @@
    },
    "RESET" : {
       "description" : "",
-      "message" : "Reset"
+      "message" : "Yeniden başlat"
    },
    "RETURN_TO_GAME" : {
       "description" : "",
@@ -923,6 +955,10 @@
       "description" : "",
       "message" : "Ödül"
    },
+   "SAGITTARIUS_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Sagittarius kolu"
+   },
    "SAVE" : {
       "description" : "",
       "message" : "Kaydet"
@@ -930,6 +966,10 @@
    "SCOOP_MOUNTS" : {
       "description" : "How many slots or mounts exist on the ship for fitting SCOOPS (e.g. cargo scoop, fuel scoop, multi-scoop) ",
       "message" : "Toplayıcı bağlantıları"
+   },
+   "SCUTUM_CENTAURUS_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Scutum-Centaurus kolu"
    },
    "SELECT" : {
       "description" : "",
@@ -955,9 +995,17 @@
       "description" : "",
       "message" : "Algılayıcılar:"
    },
+   "SENSORS_AND_DEFENCE" : {
+      "description" : "",
+      "message" : "Algılayıcılar ve savunma"
+   },
    "SHIP" : {
       "description" : "",
       "message" : "Gemi"
+   },
+   "SHIPS_ENGINEER" : {
+      "description" : "",
+      "message" : "Gemi Mühendisi"
    },
    "SHIP_INFORMATION" : {
       "description" : "",
@@ -1034,6 +1082,10 @@
    "THE_SHIP_IS_UNDER_STATION_CONTROL_COMMANDER" : {
       "description" : "",
       "message" : "Komutanım, gemi istasyon kontrolünde."
+   },
+   "THREE_KPC_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "3kpc kolu"
    },
    "TOGGLE_MALE_FEMALE" : {
       "description" : "player gender",
@@ -1166,5 +1218,9 @@
    "YOU_NOT_ENOUGH_MONEY" : {
       "description" : "",
       "message" : "Yeterince paranız yok"
+   },
+   "ZOOM" : {
+      "description" : "Label for a zoom (magnification) control bar.",
+      "message" : "Zoom"
    }
 }

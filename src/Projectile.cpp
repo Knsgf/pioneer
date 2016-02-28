@@ -1,4 +1,4 @@
-// Copyright © 2008-2015 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "libs.h"
@@ -245,7 +245,7 @@ void Projectile::StaticUpdate(const float timeStep)
 {
 	CollisionContact c;
 	vector3d vel = (m_baseVel+m_dirVel) * timeStep;
-	GetFrame()->GetCollisionSpace()->TraceRay(GetPosition(), vel.Normalized(), vel.Length(), &c, 0);
+	GetFrame()->GetCollisionSpace()->TraceRay(GetPosition(), vel.Normalized(), vel.Length(), &c);
 
 	if (c.userData1) {
 		Object *o = static_cast<Object*>(c.userData1);

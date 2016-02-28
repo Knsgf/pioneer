@@ -433,7 +433,7 @@
    },
    "GAME_LOAD_CANNOT_OPEN" : {
       "description" : "",
-      "message" : "Tento soubor nelze otevřít z důvodu oprávnění apod..."
+      "message" : "Save file '%filename' could not be found (or the game does not have access to open it)."
    },
    "GAME_LOAD_CORRUPT" : {
       "description" : "",
@@ -671,6 +671,10 @@
       "description" : "",
       "message" : "Detekována střelba z laseru."
    },
+   "LATITUDE" : {
+      "description" : "Short for latitude",
+      "message" : "Lat:"
+   },
    "LEGAL_CURRENT_SYSTEM" : {
       "description" : "Short (tooltip) description of commodity (singular) status in the system the player is currently in",
       "message" : "Legální (current system):"
@@ -695,13 +699,13 @@
       "description" : "",
       "message" : "Živá zvířata"
    },
-   "LOCAL_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "Local arm"
-   },
    "LOCKED" : {
       "description" : "to lock a hyperspace target",
       "message" : "zaměřen"
+   },
+   "LONGITUDE" : {
+      "description" : "Short for longitude",
+      "message" : "Long:"
    },
    "MAJOR_EXPORTS" : {
       "description" : "",
@@ -947,10 +951,6 @@
       "description" : "",
       "message" : "Nervový plyn"
    },
-   "NORMA_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "rameno Pravítko"
-   },
    "NOT_FOUND" : {
       "description" : "searching star system in sector view",
       "message" : "Nenalezen"
@@ -958,6 +958,10 @@
    "NOT_FOUND_BEST_MATCH_X" : {
       "description" : "",
       "message" : "Nenalezen, nejbližší výsledek: %system"
+   },
+   "NOW" : {
+      "description" : "In System Orbit View",
+      "message" : "Now"
    },
    "NO_ALERT" : {
       "description" : "",
@@ -1075,10 +1079,6 @@
       "description" : "",
       "message" : "Planeta se zemědělstvím pod širým nebem."
    },
-   "OUTER_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "rameno Labuť"
-   },
    "OVER_N_BILLION" : {
       "description" : "",
       "message" : "Více než %population miliard"
@@ -1102,10 +1102,6 @@
    "PERIAPSIS_DISTANCE" : {
       "description" : "",
       "message" : "Perihel (přísluní)"
-   },
-   "PERSEUS_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "rameno Perseus"
    },
    "PIONEER" : {
       "description" : "",
@@ -1267,10 +1263,6 @@
       "description" : "",
       "message" : "Odpadky"
    },
-   "SAGITTARIUS_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "rameno Střelec"
-   },
    "SCANNER_CONTROL" : {
       "description" : "",
       "message" : "Ovládání radaru"
@@ -1282,10 +1274,6 @@
    "SCREENSHOT_FILENAME_TEMPLATE" : {
       "description" : "",
       "message" : "pioneer_screenshot%index{d08}.png"
-   },
-   "SCUTUM_CENTAURUS_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "rameno Štít/Jižní kříž"
    },
    "SEARCH" : {
       "description" : "",
@@ -1647,10 +1635,6 @@
       "description" : "",
       "message" : "řídkou"
    },
-   "THREE_KPC_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "3kpc arm"
-   },
    "THRIVING_OUTDOOR_WORLD" : {
       "description" : "",
       "message" : "Prosperující kolonie pod širým nebem."
@@ -1687,6 +1671,10 @@
       "description" : "",
       "message" : "Drobná"
    },
+   "TOGGLE_EQUIPMENT_VIEW" : {
+      "description" : "Tooltip for the Equipment View button",
+      "message" : "Equipment View"
+   },
    "TOGGLE_HUD_MODE" : {
       "description" : "",
       "message" : "HUD mód"
@@ -1698,6 +1686,10 @@
    "TOGGLE_ROTATION_DAMPING" : {
       "description" : "",
       "message" : "Tlumení rotace"
+   },
+   "TOGGLE_SCANNER_VIEW" : {
+      "description" : "Tooltip for the Scanner View button",
+      "message" : "Scanner View"
    },
    "TOGGLE_SCAN_MODE" : {
       "description" : "",

@@ -433,7 +433,7 @@
    },
    "GAME_LOAD_CANNOT_OPEN" : {
       "description" : "",
-      "message" : "Nepavyko atidaryti šios išsaugoto žaidimo rinkmenos dėl neteisingų leidimų ar ko kita ... "
+      "message" : "Save file '%filename' could not be found (or the game does not have access to open it)."
    },
    "GAME_LOAD_CORRUPT" : {
       "description" : "",
@@ -671,6 +671,10 @@
       "description" : "",
       "message" : "Aptiktas Lazerių panaudojimas."
    },
+   "LATITUDE" : {
+      "description" : "Short for latitude",
+      "message" : "Lat:"
+   },
    "LEGAL_CURRENT_SYSTEM" : {
       "description" : "Short (tooltip) description of commodity (singular) status in the system the player is currently in",
       "message" : "Legal (current system):"
@@ -695,13 +699,13 @@
       "description" : "",
       "message" : "Gyvi gyvūnai"
    },
-   "LOCAL_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "Local arm"
-   },
    "LOCKED" : {
       "description" : "to lock a hyperspace target",
       "message" : "užrakinta"
+   },
+   "LONGITUDE" : {
+      "description" : "Short for longitude",
+      "message" : "Long:"
    },
    "MAJOR_EXPORTS" : {
       "description" : "",
@@ -947,10 +951,6 @@
       "description" : "",
       "message" : "Nervus paral. dujos"
    },
-   "NORMA_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "Norma arm"
-   },
    "NOT_FOUND" : {
       "description" : "searching star system in sector view",
       "message" : "Nerasta"
@@ -958,6 +958,10 @@
    "NOT_FOUND_BEST_MATCH_X" : {
       "description" : "",
       "message" : "Nerasta, artimiausias atitikmuo: %system"
+   },
+   "NOW" : {
+      "description" : "In System Orbit View",
+      "message" : "Now"
    },
    "NO_ALERT" : {
       "description" : "",
@@ -1075,10 +1079,6 @@
       "description" : "",
       "message" : "Lauko žemės ūkio pasaulis."
    },
-   "OUTER_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "Outer arm"
-   },
    "OVER_N_BILLION" : {
       "description" : "",
       "message" : "Virš %population milijardų"
@@ -1102,10 +1102,6 @@
    "PERIAPSIS_DISTANCE" : {
       "description" : "",
       "message" : "Periapsio atstumas"
-   },
-   "PERSEUS_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "Persėjo ranka"
    },
    "PIONEER" : {
       "description" : "",
@@ -1267,10 +1263,6 @@
       "description" : "",
       "message" : "Šiukšlės"
    },
-   "SAGITTARIUS_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "Šaulio ranka"
-   },
    "SCANNER_CONTROL" : {
       "description" : "",
       "message" : "Skanerio kontrolė"
@@ -1282,10 +1274,6 @@
    "SCREENSHOT_FILENAME_TEMPLATE" : {
       "description" : "",
       "message" : "ekranvaizdis%index{d08}.png"
-   },
-   "SCUTUM_CENTAURUS_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "Kentauro žvaigždynas"
    },
    "SEARCH" : {
       "description" : "",
@@ -1647,10 +1635,6 @@
       "description" : "",
       "message" : "plona(-s)"
    },
-   "THREE_KPC_ARM" : {
-      "description" : "Arm of the Milky Way galaxy",
-      "message" : "3kpc arm"
-   },
    "THRIVING_OUTDOOR_WORLD" : {
       "description" : "",
       "message" : "Klestintis lauko pasaulis."
@@ -1687,6 +1671,10 @@
       "description" : "",
       "message" : "Mažytis"
    },
+   "TOGGLE_EQUIPMENT_VIEW" : {
+      "description" : "Tooltip for the Equipment View button",
+      "message" : "Equipment View"
+   },
    "TOGGLE_HUD_MODE" : {
       "description" : "",
       "message" : "Perjungti HUD režimą"
@@ -1698,6 +1686,10 @@
    "TOGGLE_ROTATION_DAMPING" : {
       "description" : "",
       "message" : "Įj./Išj. sukimosi slopinimą"
+   },
+   "TOGGLE_SCANNER_VIEW" : {
+      "description" : "Tooltip for the Scanner View button",
+      "message" : "Scanner View"
    },
    "TOGGLE_SCAN_MODE" : {
       "description" : "",

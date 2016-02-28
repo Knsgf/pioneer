@@ -291,6 +291,10 @@
       "description" : "",
       "message" : "Anstellung"
    },
+   "ENABLE_ANISOTROPIC_FILTERING" : {
+      "description" : "Use Anisotropic Filtering",
+      "message" : "Anisotropische Filterung"
+   },
    "ENABLE_AUTOSAVE" : {
       "description" : "Allow the game to autosave when docking",
       "message" : "Autospeichern aktivieren"
@@ -525,7 +529,7 @@
    },
    "LAUNCH_PERMISSION_DENIED_CREW" : {
       "description" : "",
-      "message" : "Starterlaubnis verweigert: Das Schiff ist unterbesetzt."
+      "message" : "Landeerlaubnis nicht erteilt: nicht genügend Crewmitglieder, um das Schiff zu handhaben."
    },
    "LAUNCH_PERMISSION_DENIED_FINED" : {
       "description" : "",
@@ -570,6 +574,10 @@
    "LOBBY" : {
       "description" : "",
       "message" : "Empfangshalle"
+   },
+   "LOCAL_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Lokaler Arm"
    },
    "LOCATED_N_KM_FROM_THE_CENTRE_OF_NAME" : {
       "description" : "",
@@ -711,6 +719,10 @@
       "description" : "",
       "message" : "Navigation:"
    },
+   "NAVIGATOR" : {
+      "description" : "",
+      "message" : "Navigator"
+   },
    "NEGOTIATE" : {
       "description" : "",
       "message" : "Verhandeln"
@@ -734,6 +746,10 @@
    "NONE_FOR_SALE_IN_THIS_STATION" : {
       "description" : "",
       "message" : "Keine zum Verkauf in dieser Station."
+   },
+   "NORMA_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Norma-Arm"
    },
    "NOTES" : {
       "description" : "",
@@ -791,6 +807,10 @@
       "description" : "",
       "message" : "Die Kreisbahn-Geschwindigkeit wird für eine tangentiale Geschwindigkeit angegeben. Das schiff sollte in einem 90°-Winkel zur Schiff/{name}-Achse stehen.\n\nDie Landegeschwindigkeit ist ein absolutes Minimum und ist auch tangential. Eine geringere Geschwindigkeit und ein kleinerer Winkel wird in einem Kurs, der die Oberfläche von {name} schneidet, resultieren.\n\nDie Fluchtgeschwindigkeit funktioniert theoretisch gesehen in alle Richtungen, solange das Schiff auf dem Weg mit {name} kollidiert.\n\t\t"
    },
+   "OUTER_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Cygnus-Arm"
+   },
    "OUTSTANDING_FINES" : {
       "description" : "Unpaid fines for crimes committed",
       "message" : "Unbezahlte Strafen"
@@ -803,9 +823,17 @@
       "description" : "",
       "message" : "Strafgeld von {amount} bezahlen"
    },
+   "PERSEUS_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Perseus-Arm"
+   },
    "PERSONAL_INFORMATION" : {
       "description" : "",
       "message" : "Persönliche Informationen"
+   },
+   "PILOT" : {
+      "description" : "",
+      "message" : "Pilot"
    },
    "PILOTING" : {
       "description" : "",
@@ -850,6 +878,10 @@
    "PROFESSIONAL" : {
       "description" : "For player reputation",
       "message" : "Profi"
+   },
+   "PUMP_DOWN" : {
+      "description" : "Drain the fuel tank",
+      "message" : "Nach unten pumpen"
    },
    "QUALIFICATION_SCORES" : {
       "description" : "",
@@ -923,6 +955,10 @@
       "description" : "",
       "message" : "Belohnung"
    },
+   "SAGITTARIUS_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Sagittarius-Arm"
+   },
    "SAVE" : {
       "description" : "",
       "message" : "Speichern"
@@ -930,6 +966,10 @@
    "SCOOP_MOUNTS" : {
       "description" : "How many slots or mounts exist on the ship for fitting SCOOPS (e.g. cargo scoop, fuel scoop, multi-scoop) ",
       "message" : "Schaufel-Slots"
+   },
+   "SCUTUM_CENTAURUS_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Scutum-Crux-Arm"
    },
    "SELECT" : {
       "description" : "",
@@ -955,9 +995,17 @@
       "description" : "",
       "message" : "Sensoren:"
    },
+   "SENSORS_AND_DEFENCE" : {
+      "description" : "",
+      "message" : "Sensoren und Abwehr"
+   },
    "SHIP" : {
       "description" : "",
       "message" : "Schiff"
+   },
+   "SHIPS_ENGINEER" : {
+      "description" : "",
+      "message" : "Schiffsingenieur"
    },
    "SHIP_INFORMATION" : {
       "description" : "",
@@ -1034,6 +1082,10 @@
    "THE_SHIP_IS_UNDER_STATION_CONTROL_COMMANDER" : {
       "description" : "",
       "message" : "Das Schiff ist unter Kontrolle der Station, Kommandant."
+   },
+   "THREE_KPC_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "3kpc Arm"
    },
    "TOGGLE_MALE_FEMALE" : {
       "description" : "player gender",
@@ -1166,5 +1218,9 @@
    "YOU_NOT_ENOUGH_MONEY" : {
       "description" : "",
       "message" : "Sie haben nicht genügend Geld."
+   },
+   "ZOOM" : {
+      "description" : "Label for a zoom (magnification) control bar.",
+      "message" : "Zoom"
    }
 }

@@ -121,7 +121,7 @@
    },
    "FLAVOUR_23_HEADLINE" : {
       "description" : "",
-      "message" : "NAODHEACHD {date}: Fosgladh mòr factaraidh ùir ann an siostam {system}."
+      "message" : "NAIDHEACHD {date}: Fosgladh mòr factaraidh ùir ann an siostam {system}."
    },
    "FLAVOUR_23_NEWSBODY" : {
       "description" : "Imply high demand of METAL_ALLOYS. Amissionox is a play on words for Victorinox.",

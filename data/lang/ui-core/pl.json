@@ -291,6 +291,10 @@
       "description" : "",
       "message" : "Zatrudnienie"
    },
+   "ENABLE_ANISOTROPIC_FILTERING" : {
+      "description" : "Use Anisotropic Filtering",
+      "message" : "Filtrowanie anizotropowe"
+   },
    "ENABLE_AUTOSAVE" : {
       "description" : "Allow the game to autosave when docking",
       "message" : "Autozapis włączony"
@@ -525,7 +529,7 @@
    },
    "LAUNCH_PERMISSION_DENIED_CREW" : {
       "description" : "",
-      "message" : "Brak pozwolenia na lądowanie: brak wystarczającej ilości załogi by poprowadzić ten statek."
+      "message" : "Brak pozwolenia na start: niewystarczająca ilość załogi do pilotowania statku."
    },
    "LAUNCH_PERMISSION_DENIED_FINED" : {
       "description" : "",
@@ -570,6 +574,10 @@
    "LOBBY" : {
       "description" : "",
       "message" : "Recepcja"
+   },
+   "LOCAL_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Ramię Lokalne"
    },
    "LOCATED_N_KM_FROM_THE_CENTRE_OF_NAME" : {
       "description" : "",
@@ -711,6 +719,10 @@
       "description" : "",
       "message" : "Nawigacja:"
    },
+   "NAVIGATOR" : {
+      "description" : "",
+      "message" : "Nawigator"
+   },
    "NEGOTIATE" : {
       "description" : "",
       "message" : "Negocjacje"
@@ -734,6 +746,10 @@
    "NONE_FOR_SALE_IN_THIS_STATION" : {
       "description" : "",
       "message" : "Na tej stacji nie ma nic na sprzedaż."
+   },
+   "NORMA_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Ramię Normy"
    },
    "NOTES" : {
       "description" : "",
@@ -791,6 +807,10 @@
       "description" : "",
       "message" : "Prędkość orbitalna to stała prędkość z jaką powinien poruszać się statek pod kątem 90° względem osi statek/{name}.\n\nPrędkość graniczna, jest minimalną prędkością przy której statek pozostaje na orbicie.  Przy mniejszej prędkości lub kącie, rozpocznie się opadanie ku powierzchni {name}.\n\nPrędkość ucieczki teoretycznie powoduje opuszczenie orbity, jeśli tylko statek nie jest na kursie kolizyjnym z {name}.\n\t\t"
    },
+   "OUTER_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Ramię Zewnętrzne"
+   },
    "OUTSTANDING_FINES" : {
       "description" : "Unpaid fines for crimes committed",
       "message" : "Zaległe grzywny"
@@ -803,9 +823,17 @@
       "description" : "",
       "message" : "Zapłać {amount}"
    },
+   "PERSEUS_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Ramię Perseusza"
+   },
    "PERSONAL_INFORMATION" : {
       "description" : "",
       "message" : "Informacje o pilocie"
+   },
+   "PILOT" : {
+      "description" : "",
+      "message" : "Pilot"
    },
    "PILOTING" : {
       "description" : "",
@@ -850,6 +878,10 @@
    "PROFESSIONAL" : {
       "description" : "For player reputation",
       "message" : "Profesjonalista"
+   },
+   "PUMP_DOWN" : {
+      "description" : "Drain the fuel tank",
+      "message" : "Wypompuj"
    },
    "QUALIFICATION_SCORES" : {
       "description" : "",
@@ -923,6 +955,10 @@
       "description" : "",
       "message" : "Zapłata"
    },
+   "SAGITTARIUS_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Ramię Strzelca"
+   },
    "SAVE" : {
       "description" : "",
       "message" : "Zapisz"
@@ -930,6 +966,10 @@
    "SCOOP_MOUNTS" : {
       "description" : "How many slots or mounts exist on the ship for fitting SCOOPS (e.g. cargo scoop, fuel scoop, multi-scoop) ",
       "message" : "Mocowania czerpaków"
+   },
+   "SCUTUM_CENTAURUS_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Ramię Centaura"
    },
    "SELECT" : {
       "description" : "",
@@ -955,9 +995,17 @@
       "description" : "",
       "message" : "Sensory:"
    },
+   "SENSORS_AND_DEFENCE" : {
+      "description" : "",
+      "message" : "Sensory i obrona"
+   },
    "SHIP" : {
       "description" : "",
       "message" : "Statek"
+   },
+   "SHIPS_ENGINEER" : {
+      "description" : "",
+      "message" : "Mechanik pokładowy"
    },
    "SHIP_INFORMATION" : {
       "description" : "",
@@ -1034,6 +1082,10 @@
    "THE_SHIP_IS_UNDER_STATION_CONTROL_COMMANDER" : {
       "description" : "",
       "message" : "Kapitanie, statek jest pod kontrolą stacji."
+   },
+   "THREE_KPC_ARM" : {
+      "description" : "Arm of the Milky Way galaxy",
+      "message" : "Ramię Trzech Kiloparseków"
    },
    "TOGGLE_MALE_FEMALE" : {
       "description" : "player gender",
@@ -1166,5 +1218,9 @@
    "YOU_NOT_ENOUGH_MONEY" : {
       "description" : "",
       "message" : "Nie masz dość pieniędzy"
+   },
+   "ZOOM" : {
+      "description" : "Label for a zoom (magnification) control bar.",
+      "message" : "Zbliżenie"
    }
 }

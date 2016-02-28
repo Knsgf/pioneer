@@ -1,4 +1,4 @@
--- Copyright © 2008-2015 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local s = CustomSystem:new('Sol', { 'STAR_G' })
@@ -169,6 +169,7 @@ local mars_moons = {
 			:longitude(math.deg2rad(-5)),
 	},
 	CustomSystemBody:new('Deimos', 'PLANET_ASTEROID')
+		:seed(439771126)
 		:radius(f(12,10000))
 		:mass(f(25,1000000))
 		:temp(233)

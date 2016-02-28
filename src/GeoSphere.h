@@ -1,4 +1,4 @@
-// Copyright © 2008-2015 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _GEOSPHERE_H
@@ -94,6 +94,7 @@ private:
 
 	bool m_hasTempCampos;
 	vector3d m_tempCampos;
+	Graphics::Frustum m_tempFrustum;
 
 	static RefCountedPtr<GeoPatchContext> s_patchContext;
 

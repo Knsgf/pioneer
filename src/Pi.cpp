@@ -1,4 +1,4 @@
-// Copyright © 2008-2015 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Pi.h"
@@ -11,7 +11,6 @@
 #include "Factions.h"
 #include "FileSystem.h"
 #include "Frame.h"
-#include "GalacticView.h"
 #include "Game.h"
 #include "BaseSphere.h"
 #include "Intro.h"
@@ -125,7 +124,7 @@ bool Pi::doProfileOne = false;
 int Pi::statSceneTris = 0;
 int Pi::statNumPatches = 0;
 GameConfig *Pi::config;
-struct DetailLevel Pi::detail = { 0, 0 };
+DetailLevel Pi::detail;
 bool Pi::joystickEnabled;
 bool Pi::mouseYInvert;
 bool Pi::compactScanner;
@@ -414,6 +413,7 @@ void Pi::Init(const std::map<std::string,std::string> &options, bool no_gui)
 	videoSettings.requestedSamples = config->Int("AntiAliasingMode");
 	videoSettings.vsync = (config->Int("VSync") != 0);
 	videoSettings.useTextureCompression = (config->Int("UseTextureCompression") != 0);
+	videoSettings.useAnisotropicFiltering = (config->Int("UseAnisotropicFiltering") != 0);
 	videoSettings.enableDebugMessages = (config->Int("EnableGLDebug") != 0);
 	videoSettings.iconFile = OS::GetIconFilename();
 	videoSettings.title = "Pioneer";
@@ -458,7 +458,17 @@ void Pi::Init(const std::map<std::string,std::string> &options, bool no_gui)
 	Output("Lua::Init()\n");
 	Lua::Init();
 
-	Pi::ui.Reset(new UI::Context(Lua::manager, Pi::renderer, Graphics::GetScreenWidth(), Graphics::GetScreenHeight()));
+	float ui_scale = config->Float("UIScaleFactor", 1.0f);
+	if (Graphics::GetScreenHeight() < 768) {
+		ui_scale = float(Graphics::GetScreenHeight()) / 768.0f;
+	}
+
+	Pi::ui.Reset(new UI::Context(
+		Lua::manager,
+		Pi::renderer,
+		Graphics::GetScreenWidth(),
+		Graphics::GetScreenHeight(),
+		ui_scale));
 
 	Pi::serverAgent = 0;
 	if (config->Int("EnableServerAgent")) {
@@ -785,18 +795,7 @@ void Pi::HandleEvents()
 				if (event.key.keysym.sym == SDLK_ESCAPE) {
 					if (Pi::game) {
 						// only accessible once game started
-						if (currentView != 0) {
-							if (currentView != Pi::game->GetSettingsView()) {
-								Pi::game->SetTimeAccel(Game::TIMEACCEL_PAUSED);
-								SetView(Pi::game->GetSettingsView());
-							}
-							else {
-								Pi::game->RequestTimeAccel(Game::TIMEACCEL_1X);
-								SetView(Pi::player->IsDead()
-										? static_cast<View*>(Pi::game->GetDeathView())
-										: static_cast<View*>(Pi::game->GetWorldView()));
-							}
-						}
+						HandleEscKey();
 					}
 					break;
 				}
@@ -980,6 +979,49 @@ void Pi::HandleEvents()
 					break;
 				joysticks[event.jhat.which].hats[event.jhat.hat] = event.jhat.value;
 				break;
+		}
+	}
+}
+
+void Pi::HandleEscKey() {
+	if (currentView != 0) {
+		if (currentView == Pi::game->GetWorldView()) {
+			static_cast<WorldView*>(currentView)->HideTargetActions();
+			if (!Pi::game->IsPaused()) {
+				Pi::game->SetTimeAccel(Game::TIMEACCEL_PAUSED);
+			}
+			else {
+				SetView(Pi::game->GetSettingsView());
+			}
+		}
+		else if (currentView == Pi::game->GetSectorView()) {
+			Pi::game->GetCpan()->SelectGroupButton(0, 0);
+			SetView(Pi::game->GetWorldView());
+		}
+		else if ((currentView == Pi::game->GetSystemView()) || (currentView == Pi::game->GetSystemInfoView())) {
+			Pi::game->GetCpan()->SelectGroupButton(1, 0);
+			SetView(Pi::game->GetSectorView());
+		}
+		else if (currentView == Pi::game->GetSettingsView()){
+			Pi::game->RequestTimeAccel(Game::TIMEACCEL_1X);
+			SetView(Pi::player->IsDead()
+					? static_cast<View*>(Pi::game->GetDeathView())
+					: static_cast<View*>(Pi::game->GetWorldView()));
+		}
+		else {
+			UIView* view = dynamic_cast<UIView*>(currentView);
+			if (view) {
+				// checks the template name
+				const char* tname = view->GetTemplateName();
+				if (!strcmp(tname, "GalacticView")) {
+					Pi::game->GetCpan()->SelectGroupButton(1, 0);
+					SetView(Pi::game->GetSectorView());
+				}
+				else if (!strcmp(tname, "InfoView") || !strcmp(tname, "StationView")) {
+					Pi::game->GetCpan()->SelectGroupButton(0, 0);
+					SetView(Pi::game->GetWorldView());
+				}
+			}
 		}
 	}
 }
