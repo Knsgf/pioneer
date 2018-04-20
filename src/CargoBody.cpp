@@ -1,11 +1,10 @@
-// Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2018 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Ship.h"
 #include "CargoBody.h"
 #include "Game.h"
 #include "Pi.h"
-#include "Serializer.h"
 #include "Sfx.h"
 #include "Space.h"
 #include "EnumStrings.h"
@@ -13,6 +12,7 @@
 #include "collider/collider.h"
 #include "scenegraph/SceneGraph.h"
 #include "scenegraph/ModelSkin.h"
+#include "GameSaveError.h"
 
 void CargoBody::SaveToJson(Json::Value &jsonObj, Space *space)
 {
@@ -50,7 +50,8 @@ void CargoBody::LoadFromJson(const Json::Value &jsonObj, Space *space)
 void CargoBody::Init()
 {
 	m_hitpoints = 1.0f;
-	SetLabel(ScopedTable(m_cargo).CallMethod<std::string>("GetName"));
+	std::string cargoname = ScopedTable(m_cargo).CallMethod<std::string>("GetName"); // instead of switching to lua twice for the same value
+	SetLabel(cargoname);
 	SetMassDistributionFromModel();
 	m_hasSelfdestruct = true;
 
@@ -66,7 +67,7 @@ void CargoBody::Init()
 	skin.Apply(GetModel());
 	GetModel()->SetColors(colors);
 
-	Properties().Set("type", ScopedTable(m_cargo).CallMethod<std::string>("GetName"));
+	Properties().Set("type", cargoname);
 }
 
 CargoBody::CargoBody(const LuaRef& cargo, float selfdestructTimer): m_cargo(cargo)
@@ -93,7 +94,7 @@ void CargoBody::TimeStepUpdate(const float timeStep)
 		m_selfdestructTimer -= timeStep;
 		if (m_selfdestructTimer <= 0){
 			Pi::game->GetSpace()->KillBody(this);
-			Sfx::Add(this, Sfx::TYPE_EXPLOSION);
+			SfxManager::Add(this, TYPE_EXPLOSION);
 		}
 	}
 	DynamicBody::TimeStepUpdate(timeStep);
@@ -104,7 +105,7 @@ bool CargoBody::OnDamage(Object *attacker, float kgDamage, const CollisionContac
 	m_hitpoints -= kgDamage*0.001f;
 	if (m_hitpoints < 0) {
 		Pi::game->GetSpace()->KillBody(this);
-		Sfx::Add(this, Sfx::TYPE_EXPLOSION);
+		SfxManager::Add(this, TYPE_EXPLOSION);
 	}
 	return true;
 }

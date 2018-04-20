@@ -1,4 +1,4 @@
--- Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2018 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Event = import("Event")
@@ -24,7 +24,8 @@ local function doLawAndOrder ()
 		Game.player.flightState == "FLYING" and
 		Engine.rand:Integer(0,1) > Game.system.lawlessness then
 			local station = Game.player:FindNearestTo("SPACESTATION")
-			if station.lawEnforcedRange >= station:DistanceTo(Game.player) then
+			-- check that station exists, since apparently empty systems can have lawlessness > 0
+			if station and station.lawEnforcedRange >= station:DistanceTo(Game.player) then
 				station:LaunchPolice(Game.player)
 				policeDispatched = station
 			end
@@ -80,7 +81,7 @@ end
 
 local onShipHit = function(ship, attacker)
 	if attacker and attacker:IsPlayer() then
-		Legal:notifyOfCrime(ship,"PIRACY")
+		Legal:notifyOfCrime(attacker,"PIRACY")
 	end
 end
 
@@ -89,7 +90,7 @@ local onShipDestroyed = function(ship, attacker)
 	-- Note: crash issue #887, this _should_ no longer trigger crash.
 	-- Also, attacker can be a body, which does not have an IsPlayer()
 	if attacker and attacker:isa("Ship") and attacker:IsPlayer() then
-		Legal:notifyOfCrime(ship,"MURDER")
+		Legal:notifyOfCrime(attacker,"MURDER")
 	end
 end
 
@@ -105,6 +106,10 @@ local onLeaveSystem = function(ship)
 	if not ship:IsPlayer() then return end
 	-- if we leave the system, the space station object will be invalid
 	policeDispatched = nil
+
+	if not ship:IsHyperjumpAllowed() then
+		Legal:notifyOfCrime(ship,"ILLEGAL_JUMP")
+	end
 end
 
 
@@ -120,5 +125,6 @@ Event.Register("onJettison", onJettison)
 Event.Register("onGameStart", onGameStart)
 Event.Register("onGameEnd", onGameEnd)
 Event.Register("onLeaveSystem", onLeaveSystem)
+
 
 Serializer:Register("CrimeTracking", serialize, unserialize)

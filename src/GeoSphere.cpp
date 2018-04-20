@@ -1,4 +1,4 @@
-// Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2018 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "libs.h"
@@ -31,14 +31,14 @@ static const double gs_targetPatchTriLength(100.0);
 
 #define PRINT_VECTOR(_v) Output("%f,%f,%f\n", (_v).x, (_v).y, (_v).z);
 
-static const int geo_sphere_edge_friends[NUM_PATCHES][4] = {
-	{ 3, 4, 1, 2 },
-	{ 0, 4, 5, 2 },
-	{ 0, 1, 5, 3 },
-	{ 0, 2, 5, 4 },
-	{ 0, 3, 5, 1 },
-	{ 1, 4, 3, 2 }
-};
+// static const int geo_sphere_edge_friends[NUM_PATCHES][4] = {
+// 	{ 3, 4, 1, 2 },
+// 	{ 0, 4, 5, 2 },
+// 	{ 0, 1, 5, 3 },
+// 	{ 0, 2, 5, 4 },
+// 	{ 0, 3, 5, 1 },
+// 	{ 1, 4, 3, 2 }
+// };
 
 static std::vector<GeoSphere*> s_allGeospheres;
 
@@ -518,10 +518,7 @@ void GeoSphere::SetUpMaterials()
 		}
 	}
 
-	const bool bEnableEclipse = (Pi::config->Int("DisableEclipse") == 0);
-	if (bEnableEclipse) {
-		surfDesc.quality |= Graphics::HAS_ECLIPSES;
-	}
+	surfDesc.quality |= Graphics::HAS_ECLIPSES;
 	const bool bEnableDetailMaps = (Pi::config->Int("DisableDetailMaps") == 0);
 	if (bEnableDetailMaps) {
 		surfDesc.quality |= Graphics::HAS_DETAIL_MAPS;
@@ -537,9 +534,7 @@ void GeoSphere::SetUpMaterials()
 		Graphics::MaterialDescriptor skyDesc;
 		skyDesc.effect = Graphics::EFFECT_GEOSPHERE_SKY;
 		skyDesc.lighting = true;
-		if (bEnableEclipse) {
-			skyDesc.quality |= Graphics::HAS_ECLIPSES;
-		}
+		skyDesc.quality |= Graphics::HAS_ECLIPSES;
 		m_atmosphereMaterial.Reset(Pi::renderer->CreateMaterial(skyDesc));
 		m_atmosphereMaterial->texture0 = nullptr;
 		m_atmosphereMaterial->texture1 = nullptr;

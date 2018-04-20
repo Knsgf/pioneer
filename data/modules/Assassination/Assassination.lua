@@ -1,4 +1,4 @@
--- Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
+-- Copyright © 2008-2018 Pioneer Developers. See AUTHORS.txt for details
 -- Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 local Engine = import("Engine")
@@ -19,6 +19,7 @@ local Ship = import("Ship")
 local utils = import("utils")
 
 local InfoFace = import("ui/InfoFace")
+local NavButton = import("ui/NavButton")
 
 local l = Lang.GetResource("module-assassination")
 
@@ -80,12 +81,14 @@ local onChat = function (form, ref, option)
 		return
 	end
 
+	form:AddNavButton(ad.location)
+
 	if option == 0 then
 		local sys = ad.location:GetStarSystem()
 
 		local introtext = string.interp(flavours[ad.flavour].introtext, {
 			name	= ad.client.name,
-			cash	= Format.Money(ad.reward),
+			cash	= Format.Money(ad.reward,false),
 			target	= ad.target,
 			system	= sys.name,
 		})
@@ -173,6 +176,7 @@ local makeAdvert = function (station)
 	local due = Game.time + Engine.rand:Number(7*60*60*24, time * 31*60*60*24)
 	local danger = Engine.rand:Integer(1,4)
 	local reward = Engine.rand:Number(2100, 7000) * danger
+	reward = math.ceil(reward)
 
 	-- XXX hull mass is a bad way to determine suitability for role
 	--local shipdefs = utils.build_array(utils.filter(function (k,def) return def.tag == 'SHIP' and def.hullMass >= (danger * 17) and def.equipSlotCapacity.ATMOSHIELD > 0 end, pairs(ShipDef)))
@@ -329,7 +333,7 @@ local onShipDocked = function (ship, station)
 			   mission.backstation == station.path then
 				local text = string.interp(flavours[mission.flavour].successmsg, {
 					target	= mission.target,
-					cash	= Format.Money(mission.reward),
+					cash	= Format.Money(mission.reward,false),
 				})
 				Comms.ImportantMessage(text, mission.client.name)
 				ship:AddMoney(mission.reward)
@@ -355,7 +359,11 @@ local onShipDocked = function (ship, station)
 			Event.Queue("onReputationChanged", oldReputation, Character.persistent.player.killcount,
 				Character.persistent.player.reputation, Character.persistent.player.killcount)
 		else
-			if mission.ship == ship then
+			-- Fail occurs when mission ship either lands or jumps,
+			-- after taking off at said mission time point. Spawned
+			-- docked ship will trigger an onShipDocked event, thus
+			-- check mission.due
+			if mission.ship == ship and mission.due < Game.time then
 				mission.status = 'FAILED'
 			end
 		end
@@ -477,7 +485,7 @@ local onClick = function (mission)
 														name   = mission.client.name,
 														target = mission.target,
 														system = mission.location:GetStarSystem().name,
-														cash   = Format.Money(mission.reward),
+														cash   = Format.Money(mission.reward,false),
 														dist  = dist})
 										),
 										ui:Margin(10),
@@ -514,6 +522,8 @@ local onClick = function (mission)
 													ui:MultiLineText(mission.location:GetStarSystem().name.." ("..mission.location.sectorX..","..mission.location.sectorY..","..mission.location.sectorZ..")")
 												})
 											}),
+										NavButton.New(l.SET_AS_TARGET, mission.location),
+										NavButton.New(l.SET_RETURN_ROUTE, mission.backstation),
 										ui:Grid(2,1)
 											:SetColumn(0, {
 												ui:VBox():PackEnd({

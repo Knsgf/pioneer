@@ -21,7 +21,7 @@
    },
    "FLAVOUR_11_NEWSBODY" : {
       "description" : "Imply high demand of ANIMAL_MEAT.",
-      "message" : "Mar an robh làmh an t-seilbh ris, bha na sabhalan falamh nuair an do dhùisg na tuathanaich ann an siostam {system} system ({sectorx}, {sectory}, {sectorz}). Dh'aithris am poileas gur \"Seo togail bò na linne\"."
+      "message" : "Mar an robh làmh an t-seilbh ris, bha na sabhalan falamh nuair an do dhùisg na tuathanaich ann an siostam {system} system ({sectorx}, {sectory}, {sectorz}). Dh'aithris am poileas gum b'e sin \"A' chreach as motha o Thàin Bò Chuailgne\"."
    },
    "FLAVOUR_12_HEADLINE" : {
       "description" : "",
@@ -61,7 +61,7 @@
    },
    "FLAVOUR_16_NEWSBODY" : {
       "description" : "Imply high demand of FARM_MACHINERY.",
-      "message" : "Dh'adhbharaich feuchainn air clàr curaidh an reul-chriosa ann an co-fharpais tarraing tractair as motha rè Fèill Smùide Mhòr ann an siostam {system} ({sectorx}, {sectory}, {sectorz}) milleadh nuair an do chaill fear dhe na co-fharpaisichean a smachd air an tionnsgal aige, a' milleadh innealan nan co-fharpaisichean eile uile. 'S eagal leis an rianachd gun daoraich seo na tuathanaich ionadail."
+      "message" : "Dh'adhbharaich feuchainn air clàr curaidh an reul-chriosa ann an co-fharpais tarraing tractair as motha rè Fèill Smùide Mhòr ann an siostam {system} ({sectorx}, {sectory}, {sectorz}) milleadh nuair an do chaill fear dhe na co-fharpaisich a smachd air an tionnsgal aige, a' milleadh innealan nan co-fharpaiseach eile uile. 'S eagal leis an rianachd gun daoraich seo na tuathanaich ionadail."
    },
    "FLAVOUR_17_HEADLINE" : {
       "description" : "",

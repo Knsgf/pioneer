@@ -1,4 +1,4 @@
-// Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2018 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "graphics/opengl/VertexBufferGL.h"
@@ -61,21 +61,19 @@ VertexBuffer::VertexBuffer(const VertexBufferDesc &desc) :
 	assert(m_desc.stride > 0);
 	assert(m_desc.numVertices > 0);
 
-	SetVertexCount(m_desc.numVertices);
+	//SetVertexCount(m_desc.numVertices);
 
 	glGenVertexArrays(1, &m_vao);
 	glBindVertexArray(m_vao);
 
 	glGenBuffers(1, &m_buffer);
 
-	//Allocate initial data store
-	//Using zeroed m_data is not mandatory, but otherwise contents are undefined
+	//Allocate GL buffer with undefined contents
+	//Critical optimisation for some architectures in cases where buffer is created and written in the same frame
 	glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
 	const Uint32 dataSize = m_desc.numVertices * m_desc.stride;
-	m_data = new Uint8[dataSize];
-	memset(m_data, 0, dataSize);
 	const GLenum usage = (m_desc.usage == BUFFER_USAGE_STATIC) ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW;
-	glBufferData(GL_ARRAY_BUFFER, dataSize, m_data, usage);
+	glBufferData(GL_ARRAY_BUFFER, dataSize, 0, usage);
 
 	//Setup the VAO pointers
 	for (Uint8 i = 0; i < MAX_ATTRIBS; i++) {
@@ -88,7 +86,7 @@ VertexBuffer::VertexBuffer(const VertexBufferDesc &desc) :
 		switch (attr.semantic) {
 		case ATTRIB_POSITION:
 			glEnableVertexAttribArray(0);	// Enable the attribute at that location
-			glVertexAttribPointer(0, get_num_components(attr.format), get_component_type(attr.format), GL_FALSE, m_desc.stride, offset);	
+			glVertexAttribPointer(0, get_num_components(attr.format), get_component_type(attr.format), GL_FALSE, m_desc.stride, offset);
 			break;
 		case ATTRIB_NORMAL:
 			glEnableVertexAttribArray(1);	// Enable the attribute at that location
@@ -115,11 +113,12 @@ VertexBuffer::VertexBuffer(const VertexBufferDesc &desc) :
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	//Don't keep client data around for static buffers
-	if (GetDesc().usage == BUFFER_USAGE_STATIC) {
-		delete[] m_data;
-		m_data = nullptr;
+	// Allocate client data store for dynamic buffers
+	if (GetDesc().usage != BUFFER_USAGE_STATIC) {
+		m_data = new Uint8[dataSize];
+		memset(m_data, 0, dataSize);
 	}
+	else m_data = nullptr;
 }
 
 VertexBuffer::~VertexBuffer()
@@ -159,6 +158,7 @@ void VertexBuffer::Unmap()
 		if (m_mapMode == BUFFER_MAP_WRITE) {
 			const GLsizei dataSize = m_desc.numVertices * m_desc.stride;
 			glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+			glBufferData(GL_ARRAY_BUFFER, dataSize, 0, GL_DYNAMIC_DRAW);
 			glBufferSubData(GL_ARRAY_BUFFER, 0, dataSize, m_data);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
@@ -166,12 +166,18 @@ void VertexBuffer::Unmap()
 	glBindVertexArray(0);
 
 	m_mapMode = BUFFER_MAP_NONE;
+	m_written = true;
 }
 
 #pragma pack(push, 4)
 struct PosUVVert {
 	vector3f pos;
 	vector2f uv;
+};
+
+struct PosNormVert {
+	vector3f pos;
+	vector3f norm;
 };
 
 struct PosColVert {
@@ -194,9 +200,27 @@ struct PosNormUVVert {
 	vector3f norm;
 	vector2f uv;
 };
+
+struct PosNormColVert {
+	vector3f pos;
+	vector3f norm;
+	Color4ub col;
+};
 #pragma pack(pop)
 
-void CopyPosUV0(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
+static inline void CopyPosNorm(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
+{
+	PosNormVert* vtxPtr = vb->Map<PosNormVert>(Graphics::BUFFER_MAP_WRITE);
+	assert(vb->GetDesc().stride == sizeof(PosNormVert));
+	for(Uint32 i=0 ; i<va.GetNumVerts() ; i++)
+	{
+		vtxPtr[i].pos	= va.position[i];
+		vtxPtr[i].norm	= va.normal[i];
+	}
+	vb->Unmap();
+}
+
+static inline void CopyPosUV0(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
 {
 	PosUVVert* vtxPtr = vb->Map<PosUVVert>(Graphics::BUFFER_MAP_WRITE);
 	assert(vb->GetDesc().stride == sizeof(PosUVVert));
@@ -208,7 +232,7 @@ void CopyPosUV0(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
 	vb->Unmap();
 }
 
-void CopyPosCol(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
+static inline void CopyPosCol(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
 {
 	PosColVert* vtxPtr = vb->Map<PosColVert>(Graphics::BUFFER_MAP_WRITE);
 	assert(vb->GetDesc().stride == sizeof(PosColVert));
@@ -220,7 +244,7 @@ void CopyPosCol(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
 	vb->Unmap();
 }
 
-void CopyPos(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
+static inline void CopyPos(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
 {
 	PosVert* vtxPtr = vb->Map<PosVert>(Graphics::BUFFER_MAP_WRITE);
 	assert(vb->GetDesc().stride == sizeof(PosVert));
@@ -231,7 +255,7 @@ void CopyPos(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
 	vb->Unmap();
 }
 
-void CopyPosColUV0(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
+static inline void CopyPosColUV0(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
 {
 	PosColUVVert* vtxPtr = vb->Map<PosColUVVert>(Graphics::BUFFER_MAP_WRITE);
 	assert(vb->GetDesc().stride == sizeof(PosColUVVert));
@@ -244,7 +268,7 @@ void CopyPosColUV0(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
 	vb->Unmap();
 }
 
-void CopyPosNormUV0(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
+static inline void CopyPosNormUV0(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
 {
 	PosNormUVVert* vtxPtr = vb->Map<PosNormUVVert>(Graphics::BUFFER_MAP_WRITE);
 	assert(vb->GetDesc().stride == sizeof(PosNormUVVert));
@@ -257,25 +281,53 @@ void CopyPosNormUV0(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
 	vb->Unmap();
 }
 
+static inline void CopyPosNormCol(Graphics::VertexBuffer *vb, const Graphics::VertexArray &va)
+{
+	PosNormColVert* vtxPtr = vb->Map<PosNormColVert>(Graphics::BUFFER_MAP_WRITE);
+	assert(vb->GetDesc().stride == sizeof(PosNormColVert));
+	for(Uint32 i=0 ; i<va.GetNumVerts() ; i++)
+	{
+		vtxPtr[i].pos	= va.position[i];
+		vtxPtr[i].norm	= va.normal[i];
+		vtxPtr[i].col	= va.diffuse[i];
+	}
+	vb->Unmap();
+}
+
 // copies the contents of the VertexArray into the buffer
 bool VertexBuffer::Populate(const VertexArray &va)
 {
 	PROFILE_SCOPED()
 	assert(va.GetNumVerts()>0);
-	assert(va.GetNumVerts()==m_numVertices);
+	assert(va.GetNumVerts()<=m_capacity);
 	bool result = false;
 	const Graphics::AttributeSet as = va.GetAttributeSet();
 	switch( as ) {
 	case Graphics::ATTRIB_POSITION:														CopyPos(this, va);			result = true;	break;
 	case Graphics::ATTRIB_POSITION | Graphics::ATTRIB_DIFFUSE:							CopyPosCol(this, va);		result = true;	break;
+	case Graphics::ATTRIB_POSITION | Graphics::ATTRIB_NORMAL:							CopyPosNorm(this, va);		result = true;	break;
 	case Graphics::ATTRIB_POSITION | Graphics::ATTRIB_UV0:								CopyPosUV0(this, va);		result = true;	break;
 	case Graphics::ATTRIB_POSITION | Graphics::ATTRIB_DIFFUSE | Graphics::ATTRIB_UV0:	CopyPosColUV0(this, va);	result = true;	break;
 	case Graphics::ATTRIB_POSITION | Graphics::ATTRIB_NORMAL | Graphics::ATTRIB_UV0:	CopyPosNormUV0(this, va);	result = true;	break;
+	case Graphics::ATTRIB_POSITION | Graphics::ATTRIB_NORMAL | Graphics::ATTRIB_DIFFUSE:CopyPosNormCol(this, va);	result = true;	break;
 	}
+	SetVertexCount(va.GetNumVerts());
 	return result;
 }
 
+void VertexBuffer::BufferData(const size_t size, void *data)
+{
+	PROFILE_SCOPED()
+	assert(m_mapMode == BUFFER_MAP_NONE); //must not be currently mapped
+	if (GetDesc().usage == BUFFER_USAGE_DYNAMIC) {
+		glBindVertexArray(m_vao);
+		glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+		glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size), static_cast<GLvoid*>(data), GL_DYNAMIC_DRAW);
+	}
+}
+
 void VertexBuffer::Bind() {
+	assert(m_written);
 	glBindVertexArray(m_vao);
 
 	// Enable the Vertex attributes
@@ -322,16 +374,14 @@ IndexBuffer::IndexBuffer(Uint32 size, BufferUsage hint)
 	const GLenum usage = (hint == BUFFER_USAGE_STATIC) ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW;
 	glGenBuffers(1, &m_buffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer);
-	m_data = new Uint32[size];
-	memset(m_data, 0, sizeof(Uint32) * size);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Uint32) * m_size, m_data, usage);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Uint32) * m_size, 0, usage);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	//Don't keep client data around for static buffers
-	if (GetUsage() == BUFFER_USAGE_STATIC) {
-		delete[] m_data;
-		m_data = nullptr;
+	if (GetUsage() != BUFFER_USAGE_STATIC) {
+		m_data = new Uint32[size];
+		memset(m_data, 0, sizeof(Uint32) * size);
 	}
+	else m_data = nullptr;
 }
 
 IndexBuffer::~IndexBuffer()
@@ -366,15 +416,28 @@ void IndexBuffer::Unmap()
 	} else {
 		if (m_mapMode == BUFFER_MAP_WRITE) {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(Uint32) * m_size, 0, GL_DYNAMIC_DRAW);
 			glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(Uint32) * m_size, m_data);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 	}
 
 	m_mapMode = BUFFER_MAP_NONE;
+	m_written = true;
+}
+
+void IndexBuffer::BufferData(const size_t size, void *data)
+{
+	PROFILE_SCOPED()
+	assert(m_mapMode == BUFFER_MAP_NONE); //must not be currently mapped
+	if (GetUsage() == BUFFER_USAGE_DYNAMIC) {
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(size), static_cast<GLvoid*>(data), GL_DYNAMIC_DRAW);
+	}
 }
 
 void IndexBuffer::Bind() {
+	assert(m_written);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffer);
 }
 
@@ -391,14 +454,12 @@ InstanceBuffer::InstanceBuffer(Uint32 size, BufferUsage hint)
 	const GLenum usage = (hint == BUFFER_USAGE_STATIC) ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW;
 	glGenBuffers(1, &m_buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-	m_data.reset( new matrix4x4f[size] );
-	memset(m_data.get(), 0, sizeof(matrix4x4f) * size);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(matrix4x4f) * m_size, m_data.get(), usage);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(matrix4x4f) * m_size, 0, usage);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	//Don't keep client data around for static buffers
-	if (GetUsage() == BUFFER_USAGE_STATIC) {
-		m_data.reset();
+	if (GetUsage() != BUFFER_USAGE_STATIC) {
+		m_data.reset(new matrix4x4f[size]);
+		memset(m_data.get(), 0, sizeof(matrix4x4f) * size);
 	}
 }
 
@@ -433,15 +494,18 @@ void InstanceBuffer::Unmap()
 	} else {
 		if (m_mapMode == BUFFER_MAP_WRITE) {
 			glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(matrix4x4f) * m_size, 0, GL_DYNAMIC_DRAW);
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(matrix4x4f) * m_size, m_data.get());
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 	}
 
 	m_mapMode = BUFFER_MAP_NONE;
+	m_written = true;
 }
 
 void InstanceBuffer::Bind() {
+	assert(m_written);
 	glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
 
 	// used to pass a matrix4x4f in, however each attrib array is max size of (GLSL) vec4 so must enable 4 arrays

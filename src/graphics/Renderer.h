@@ -1,10 +1,10 @@
-// Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2018 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _RENDERER_H
 #define _RENDERER_H
 
-#include "WindowSDL.h"
+#include "Graphics.h"
 #include "libs.h"
 #include "Types.h"
 #include "Light.h"
@@ -44,17 +44,23 @@ enum class MatrixMode {
 class Renderer
 {
 public:
-	Renderer(WindowSDL *win, int width, int height);
+	Renderer(SDL_Window *win, int width, int height);
 	virtual ~Renderer();
 
 	virtual const char* GetName() const = 0;
+	virtual RendererType GetRendererType() const = 0;
 
 	virtual void WriteRendererInfo(std::ostream &out) const {}
 
-	virtual void CheckRenderErrors() const {}
+	virtual void CheckRenderErrors(const char *func = nullptr, const int line = -1) const {}
 
-	WindowSDL *GetWindow() const { return m_window.get(); }
+	virtual bool SupportsInstancing() = 0;
+
+	SDL_Window *GetSDLWindow() const { return m_window; }
 	float GetDisplayAspect() const { return static_cast<float>(m_width) / static_cast<float>(m_height); }
+	int GetWindowWidth() const { return m_width; }
+	int GetWindowHeight() const { return m_height; }
+	virtual int GetMaximumNumberAASamples() const = 0;
 
 	//get supported minimum for z near and maximum for z far values
 	virtual bool GetNearFarRange(float &near_, float &far_) const = 0;
@@ -86,7 +92,7 @@ public:
 	virtual bool SetRenderState(RenderState*) = 0;
 
 	// XXX maybe GL-specific. maybe should be part of the render state
-	virtual bool SetDepthRange(double near, double far) = 0;
+	virtual bool SetDepthRange(double znear, double zfar) = 0;
 
 	virtual bool SetWireFrameMode(bool enabled) = 0;
 
@@ -103,7 +109,8 @@ public:
 	//unindexed triangle draw
 	virtual bool DrawTriangles(const VertexArray *vertices, RenderState *state, Material *material, PrimitiveType type=TRIANGLES) = 0;
 	//high amount of textured quads for particles etc
-	virtual bool DrawPointSprites(int count, const vector3f *positions, RenderState *rs, Material *material, float size) = 0;
+	virtual bool DrawPointSprites(const Uint32 count, const vector3f *positions, RenderState *rs, Material *material, float size) = 0;
+	virtual bool DrawPointSprites(const Uint32 count, const vector3f *positions, const vector2f *offsets, const float *sizes, RenderState *rs, Material *material) = 0;
 	//complex unchanging geometry that is worthwhile to store in VBOs etc.
 	virtual bool DrawBuffer(VertexBuffer*, RenderState*, Material*, PrimitiveType type=TRIANGLES) = 0;
 	virtual bool DrawBufferIndexed(VertexBuffer*, IndexBuffer*, RenderState*, Material*, PrimitiveType=TRIANGLES) = 0;
@@ -116,7 +123,7 @@ public:
 	virtual Texture *CreateTexture(const TextureDescriptor &descriptor) = 0;
 	virtual RenderState *CreateRenderState(const RenderStateDesc &) = 0;
 	//returns 0 if unsupported
-	virtual RenderTarget *CreateRenderTarget(const RenderTargetDesc &) { return 0; }
+	virtual RenderTarget *CreateRenderTarget(const RenderTargetDesc &) = 0;
 	virtual VertexBuffer *CreateVertexBuffer(const VertexBufferDesc&) = 0;
 	virtual IndexBuffer *CreateIndexBuffer(Uint32 size, BufferUsage) = 0;
 	virtual InstanceBuffer *CreateInstanceBuffer(Uint32 size, BufferUsage) = 0;
@@ -177,8 +184,11 @@ public:
 	};
 
 	virtual bool Screendump(ScreendumpState &sd) { return false; }
+	virtual bool FrameGrab(ScreendumpState &sd) { return false;	}
 
 	Stats& GetStats() { return m_stats; }
+
+	void SetGrab(const bool grabbed);
 
 protected:
 	int m_width;
@@ -186,6 +196,7 @@ protected:
 	Color m_ambient;
 	Light m_lights[4];
 	Stats m_stats;
+	SDL_Window *m_window;
 
 	virtual void PushState() = 0;
 	virtual void PopState() = 0;
@@ -194,8 +205,6 @@ private:
 	typedef std::pair<std::string,std::string> TextureCacheKey;
 	typedef std::map<TextureCacheKey,RefCountedPtr<Texture>*> TextureCacheMap;
 	TextureCacheMap m_textures;
-
-	std::unique_ptr<WindowSDL> m_window;
 };
 
 }

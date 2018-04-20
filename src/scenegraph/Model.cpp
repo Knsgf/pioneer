@@ -1,4 +1,4 @@
-// Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2018 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Model.h"
@@ -9,6 +9,10 @@
 #include "graphics/VertexArray.h"
 #include "StringF.h"
 #include "json/JsonUtils.h"
+#include "FindNodeVisitor.h"
+#include "Thruster.h"
+#include "utils.h"
+#include "GameSaveError.h"
 
 namespace SceneGraph {
 
@@ -180,8 +184,6 @@ void Model::Render(const std::vector<matrix4x4f> &trans, const RenderData *rd)
 	//Override renderdata if this model is called from ModelNode
 	RenderData params = (rd != 0) ? (*rd) : m_renderData;
 
-	//m_renderer->SetTransform(trans);
-
 	//using the entire model bounding radius for all nodes at the moment.
 	//BR could also be a property of Node.
 	params.boundingRadius = GetDrawClipRadius();
@@ -266,7 +268,7 @@ void Model::DrawAabb()
 	}
 
 	m_renderer->DrawBuffer( m_aabbVB.Get(), m_state, m_aabbMat.Get(), Graphics::LINE_SINGLE);
-	
+
 }
 
 // Draw collision mesh as a wireframe overlay
@@ -331,7 +333,7 @@ RefCountedPtr<Graphics::Material> Model::GetMaterialByName(const std::string &na
 {
 	for (auto it : m_materials)
 	{
-		if (it.first == name) 
+		if (it.first == name)
 			return it.second;
 	}
 	return RefCountedPtr<Graphics::Material>(); //return invalid
@@ -436,8 +438,8 @@ bool Model::SupportsDecals()
 
 bool Model::SupportsPatterns()
 {
-	for (MaterialContainer::const_iterator it = m_materials.begin();
-		it != m_materials.end();
+	for (MaterialContainer::const_iterator it = m_materials.begin(), itEnd = m_materials.end();
+		it != itEnd;
 		++it)
 	{
 		//Set pattern only on a material that supports it
@@ -472,6 +474,54 @@ void Model::SetThrust(const vector3f &lin, const vector3f &ang)
 	m_renderData.angthrust[0] = ang.x;
 	m_renderData.angthrust[1] = ang.y;
 	m_renderData.angthrust[2] = ang.z;
+}
+
+void Model::SetThrusterColor(const vector3f &dir, const Color &color)
+{
+	assert(m_root!=nullptr);
+
+	FindNodeVisitor thrusterFinder(FindNodeVisitor::MATCH_NAME_FULL, "thrusters");
+	m_root->Accept(thrusterFinder);
+	const std::vector<Node*> &results = thrusterFinder.GetResults();
+	Group* thrusters = static_cast<Group*>(results.at(0));
+
+	for (unsigned int i=0; i<thrusters->GetNumChildren(); i++) {
+		MatrixTransform *mt = static_cast<MatrixTransform*>(thrusters->GetChildAt(i));
+		Thruster* my_thruster = static_cast<Thruster*>(mt->GetChildAt(0));
+		if (my_thruster==nullptr) continue;
+		float dot = my_thruster->GetDirection().Dot(dir);
+		if (dot>0.99) my_thruster->SetColor(color);
+	}
+}
+
+void Model::SetThrusterColor(const std::string &name, const Color &color)
+{
+    assert(m_root!=nullptr);
+
+	FindNodeVisitor thrusterFinder(FindNodeVisitor::MATCH_NAME_FULL, name);
+	m_root->Accept(thrusterFinder);
+	const std::vector<Node*> &results = thrusterFinder.GetResults();
+
+	//Hope there's only 1 result...
+	Thruster* my_thruster = static_cast<Thruster*>(results.at(0));
+	if (my_thruster!=nullptr) my_thruster->SetColor(color);
+}
+
+void Model::SetThrusterColor(const Color &color)
+{
+    assert(m_root!=nullptr);
+
+	FindNodeVisitor thrusterFinder(FindNodeVisitor::MATCH_NAME_FULL, "thrusters");
+	m_root->Accept(thrusterFinder);
+	const std::vector<Node*> &results = thrusterFinder.GetResults();
+	Group* thrusters = static_cast<Group*>(results.at(0));
+
+	for (unsigned int i=0; i<thrusters->GetNumChildren(); i++) {
+		MatrixTransform *mt = static_cast<MatrixTransform*>(thrusters->GetChildAt(i));
+		Thruster* my_thruster = static_cast<Thruster*>(mt->GetChildAt(0));
+		assert(my_thruster!=nullptr);
+		my_thruster->SetColor(color);
+	}
 }
 
 class SaveVisitorJson : public NodeVisitor {

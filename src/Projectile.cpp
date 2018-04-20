@@ -1,4 +1,4 @@
-// Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2018 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "libs.h"
@@ -7,7 +7,6 @@
 #include "Frame.h"
 #include "galaxy/StarSystem.h"
 #include "Space.h"
-#include "Serializer.h"
 #include "collider/collider.h"
 #include "CargoBody.h"
 #include "Planet.h"
@@ -15,6 +14,7 @@
 #include "Ship.h"
 #include "Pi.h"
 #include "Game.h"
+#include "Player.h"
 #include "LuaEvent.h"
 #include "LuaUtils.h"
 #include "graphics/Graphics.h"
@@ -23,6 +23,7 @@
 #include "graphics/VertexArray.h"
 #include "graphics/TextureBuilder.h"
 #include "json/JsonUtils.h"
+#include "GameSaveError.h"
 
 std::unique_ptr<Graphics::VertexArray> Projectile::s_sideVerts;
 std::unique_ptr<Graphics::VertexArray> Projectile::s_glowVerts;
@@ -37,8 +38,8 @@ void Projectile::BuildModel()
 	desc.textures = 1;
 	s_sideMat.reset(Pi::renderer->CreateMaterial(desc));
 	s_glowMat.reset(Pi::renderer->CreateMaterial(desc));
-	s_sideMat->texture0 = Graphics::TextureBuilder::Billboard("textures/projectile_l.png").GetOrCreateTexture(Pi::renderer, "billboard");
-	s_glowMat->texture0 = Graphics::TextureBuilder::Billboard("textures/projectile_w.png").GetOrCreateTexture(Pi::renderer, "billboard");
+	s_sideMat->texture0 = Graphics::TextureBuilder::Billboard("textures/projectile_l.dds").GetOrCreateTexture(Pi::renderer, "billboard");
+	s_glowMat->texture0 = Graphics::TextureBuilder::Billboard("textures/projectile_w.dds").GetOrCreateTexture(Pi::renderer, "billboard");
 
 	//zero at projectile position
 	//+x down
@@ -217,21 +218,27 @@ double Projectile::GetRadius() const
 static void MiningLaserSpawnTastyStuff(Frame *f, const SystemBody *asteroid, const vector3d &pos)
 {
 	lua_State *l = Lua::manager->GetLuaState();
-	pi_lua_import(l, "Equipment");
-	LuaTable cargo_types = LuaTable(l, -1).Sub("cargo");
-	if (20*Pi::rng.Fixed() < asteroid->GetMetallicityAsFixed()) {
-		cargo_types.Sub("precious_metals");
-	} else if (8*Pi::rng.Fixed() < asteroid->GetMetallicityAsFixed()) {
-		cargo_types.Sub("metal_alloys");
-	} else if (Pi::rng.Fixed() < asteroid->GetMetallicityAsFixed()) {
-		cargo_types.Sub("metal_ore");
-	} else if (Pi::rng.Fixed() < fixed(1,2)) {
-		cargo_types.Sub("water");
-	} else {
-		cargo_types.Sub("rubbish");
-	}
+
+	// lua cant push "const SystemBody", needs to convert to non-const
+	RefCountedPtr<StarSystem> s = Pi::game->GetGalaxy()->GetStarSystem(asteroid->GetPath());
+	SystemBody *liveasteroid = s->GetBodyByPath(asteroid->GetPath());
+
+	// this is an adapted version of "CallMethod", because;
+	// 1, there is no template for LuaObject<LuaTable>::CallMethod(..., SystemBody)
+	// 2, this leaves the return value on the lua stack to be used by "new CargoBody()"
+	LUA_DEBUG_START(l);
+	LuaObject<Player>::PushToLua(Pi::player);
+	lua_pushstring(l, "SpawnMiningContainer");
+	lua_gettable(l, -2);
+	lua_pushvalue(l, -2);
+	lua_remove(l, -3);
+	LuaObject<SystemBody>::PushToLua(liveasteroid);
+	pi_lua_protected_call(l, 2, 1);
+
 	CargoBody *cargo = new CargoBody(LuaRef(l, -1));
-	lua_pop(l, 3);
+	lua_pop(l, 1);
+	LUA_DEBUG_END(l, 0);
+
 	cargo->SetFrame(f);
 	cargo->SetPosition(pos);
 	const double x = Pi::rng.Double();
@@ -245,7 +252,8 @@ void Projectile::StaticUpdate(const float timeStep)
 {
 	PROFILE_SCOPED()
 	CollisionContact c;
-	vector3d vel = (m_baseVel+m_dirVel) * timeStep;
+	// Collision spaces don't store velocity, so dirvel-only is still wrong but less awful than dirvel+basevel
+	vector3d vel = m_dirVel * timeStep;
 	GetFrame()->GetCollisionSpace()->TraceRay(GetPosition(), vel.Normalized(), vel.Length(), &c);
 
 	if (c.userData1) {
@@ -264,19 +272,23 @@ void Projectile::StaticUpdate(const float timeStep)
 			}
 		}
 	}
-	if (m_mining) {
+	if (m_mining) // mining lasers can break off chunks of terrain
+	{
 		// need to test for terrain hit
-		if (GetFrame()->GetBody() && GetFrame()->GetBody()->IsType(Object::PLANET)) {
-			Planet *const planet = static_cast<Planet*>(GetFrame()->GetBody());
-			const SystemBody *b = planet->GetSystemBody();
+		Planet *const planet = static_cast<Planet*>(GetFrame()->GetBody()); // cache the value even for the if statement
+		if (planet && planet->IsType(Object::PLANET))
+		{
 			vector3d pos = GetPosition();
 			double terrainHeight = planet->GetTerrainHeight(pos.Normalized());
-			if (terrainHeight > pos.Length()) {
+			if (terrainHeight > pos.Length())
+			{
+				const SystemBody *b = planet->GetSystemBody();
 				// hit the fucker
-				if (b->GetType() == SystemBody::TYPE_PLANET_ASTEROID) {
+				if (b->GetType() == SystemBody::TYPE_PLANET_ASTEROID)
+				{
 					vector3d n = GetPosition().Normalized();
 					MiningLaserSpawnTastyStuff(planet->GetFrame(), b, n*terrainHeight + 5.0*n);
-					Sfx::Add(this, Sfx::TYPE_EXPLOSION);
+					SfxManager::Add(this, TYPE_EXPLOSION);
 				}
 				Pi::game->GetSpace()->KillBody(this);
 			}

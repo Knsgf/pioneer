@@ -1,4 +1,4 @@
-// Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2018 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #ifndef _CAMERA_H
@@ -79,7 +79,7 @@ public:
 	// camera-specific light with attached source body
 	class LightSource {
 	public:
-		LightSource(const Body *b, Graphics::Light light) : m_body(b), m_light(light) {}
+		LightSource(const Body *b, Graphics::Light &light) : m_body(b), m_light(light) {}
 
 		const Body *GetBody() const { return m_body; }
 		const Graphics::Light &GetLight() const { return m_light; }
@@ -90,7 +90,6 @@ public:
 	};
 
 	struct Shadow {
-		int occultedLight;
 		vector3d centre;
 		float srad;
 		float lrad;
@@ -104,7 +103,7 @@ public:
 
 	// lights with properties in camera space
 	const std::vector<LightSource> &GetLightSources() const { return m_lightSources; }
-	const int GetNumLightSources() const { return m_lightSources.size(); }
+	const int GetNumLightSources() const { return static_cast<Uint32>(m_lightSources.size()); }
 
 private:
 	RefCountedPtr<CameraContext> m_context;

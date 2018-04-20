@@ -169,7 +169,7 @@
    },
    "HOW_SOON_MUST_IT_BE_DONE" : {
       "description" : "",
-      "message" : "En yakın ne zaman yapılması gerekiyor?"
+      "message" : "Ne zaman yapılması gerekiyor?"
    },
    "HOW_WILL_I_BE_PAID" : {
       "description" : "",
@@ -181,7 +181,7 @@
    },
    "LY" : {
       "description" : "",
-      "message" : "ly"
+      "message" : "ıy"
    },
    "OK_AGREED" : {
       "description" : "",
@@ -190,6 +190,14 @@
    "RETURN_HERE_ON_THE_COMPLETION_OF_THE_CONTRACT_AND_YOU_WILL_BE_PAID" : {
       "description" : "",
       "message" : "Sözleşme tamamlandığında buraya dönün ve paranızı alacaksınız."
+   },
+   "SET_AS_TARGET" : {
+      "description" : "",
+      "message" : "Navigasyon hedefi olarak seç"
+   },
+   "SET_RETURN_ROUTE" : {
+      "description" : "",
+      "message" : "Dönüş yolunu seç"
    },
    "SHIP" : {
       "description" : "",

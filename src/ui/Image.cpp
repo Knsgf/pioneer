@@ -1,4 +1,4 @@
-// Copyright © 2008-2016 Pioneer Developers. See AUTHORS.txt for details
+// Copyright © 2008-2018 Pioneer Developers. See AUTHORS.txt for details
 // Licensed under the terms of the GPL v3. See licenses/GPL-3.txt
 
 #include "Image.h"
@@ -66,7 +66,7 @@ Image *Image::SetNaturalSize()
 
 void Image::SetTransform(float scale, const vector2f &centre)
 {
-	if (m_scale != scale || !(m_centre == centre)) {
+	if (!is_equal_exact(m_scale, scale) || !m_centre.ExactlyEqual(centre)) {
 		m_needsRefresh = true;
 		m_scale = scale;
 		m_centre = centre;
